@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -19,6 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'role_id',
+        'phone_number',
         'password',
     ];
 
@@ -46,6 +49,25 @@ class User extends Authenticatable
         return $this->belongsToMany(Produit::class);
     }
 
+    public function routeNotificationForNexmo($notification)
+    {
+        return $this->phone_number;
+    }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+
+    public function isAdmin()
+    {
+        if ($this->role->role=="admin" OR $this->role->role=="super-admin")
+        {
+            return true;
+        }
+        else
+            return false;
+    }
 
 }

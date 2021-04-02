@@ -27,21 +27,25 @@ Route::get('liste-produit',[MainController::class,'getListe'] )->name('liste.pro
 
 Route::get('modif-produit/{param}',[MainController::class,'updateProduit'] )->name('modife.produit');
 
-Route::get('supp-produit/{id}',[MainController::class,'supProduit'] )->name('supp.produit');
 
 Route::get('supp-commande/{id}',[MainController::class,'supprimercommande'] )->name('supprimercommande');
 
 Route::get('ajout-commande/{id}',[MainController::class,'ajouterCommande'] )->name('ajoutercommande');
 
+Route::middleware(['auth', 'isAdmin'])->prefix("admin")->group(function(){
+    
+    Route::get('ajout-produit',[MainController::class,'ajouterProduit'] )->name('a.produit');
+    Route::get('supp-produit/{id}',[MainController::class,'supProduit'] )->name('supp.produit');
+    Route::get('edit-produit/{id}',[MainController::class,'editProduit'] )->name('produit.modifier');
 
-Route::get('ajout-produit',[MainController::class,'ajouterProduit'] )->name('a.produit');
+});
+
 
 Route::post('enr-produit',[MainController::class,'enregistrerProduit'] )->name('produit.enregistrer');
 
 
 Route::put ('updat-produit/{id}',[MainController::class,'updatProduit'] )->name('produit.updat');
 
-Route::get('edit-produit/{id}',[MainController::class,'editProduit'] )->name('produit.modifier');
 
 //ressources
 
@@ -53,4 +57,23 @@ Route::get('export-excel', [MainController::class,'excelExport'])->name('excel.e
 
 
 
+
+
+// Authentification
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+
+require __DIR__.'/auth.php';
+
+
+///collection
+
+Route::get('test-collections', [ProduitController::class,'index']);
 

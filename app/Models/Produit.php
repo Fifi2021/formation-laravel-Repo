@@ -16,7 +16,8 @@ class Produit extends Model
         'prix',
         'like',
         'poids',
-        'pays_source'
+        'pays_source',
+        'image'
 
     ];
 

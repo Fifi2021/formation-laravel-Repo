@@ -30,6 +30,7 @@ class ProduitFormRequest extends FormRequest
             "like"=>"required|digits_between:1,2",
             "poids"=>"required|digits_between:1,2",
             "description"=>"required|min:5|max:255",
+            "image"=>"file|mimes:png,jpg,jpeg,bmp,svg|nullable",
         ];
     }
 }

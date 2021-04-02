@@ -18,62 +18,10 @@
                             </button>
                             {{session('statuts')}}
                         </div>
-                    @endif                                
-                    <form action="{{route('produit.enregistrer')}}" method="post">
+                    @endif                                 
+                    <form action="{{route('produit.enregistrer')}}" method="post" enctype="multipart/form-data">
                         @method("POST")
-                        @csrf
-                        <div class="form-group">
-                            <label for="">Désignation</label>
-                            <input value="{{ old('designation') }}" type="text" name="designation" id="" class="form-control" placeholder="" aria-describedby="helpId">
-                            <small id="helpdesign" class="text-muted">Veuillez renseigner ce champ</small>
-                            @error('designation')
-                                <small class="text-danger>{{$message}}</small>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="">Prix</label>
-                            <input value="{{ old('prix') }}" type="number" name="prix" id="" class="form-control" placeholder="" aria-describedby="helpId">
-                            <small id="helpprix" class="text-muted">prix du produit</small>
-                            @error('prix')
-                                <small class="text-danger">{{$message}}</small>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="">Poids</label>
-                            <input value="{{ old('poids') }}"type="number" name="poids" id="" class="form-control" placeholder="" aria-describedby="helpId">
-                            <small id="helppoids" class="text-muted">poids du produit</small>
-                            @error('prix')
-                                <small class="text-danger>{{$message}}</small>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="">Like</label>
-                            <input value="{{ old('like') }}" type="number" name="like" id="" class="form-control" placeholder="" aria-describedby="helpId">
-                            <small id="helplike" class="text-muted">like</small>
-                            @error('like')
-                                <small class="text-danger>{{$message}}</small>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="">Description</label>
-                            <input value="{{ old('description') }}" type="text" name="description" id="" class="form-control" placeholder="" aria-describedby="helpId">
-                            <small id="helpdesc" class="text-muted">description</small>
-                            @error('description')
-                                <small class="text-danger>{{$message}}</small>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="">Pays source</label>
-                            <select class="form-control" name="pays" id="">
-                                <option value="Burkina" {{ old('pays')=="Burkina" ? "selected" : ""}}>Burkina</option>
-                                <option value="Mali" {{ old('pays')=="Mali" ? "selected" : ""}}>Mali</option>
-                                <option value="Senegal" {{ old('pays')=="Senegal" ? "selected" : ""}}>Senegal</option>
-                            </select>  
-                            @error('pay')
-                                <small class="text-danger>{{$message}}</small>
-                            @enderror                      
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block btn-lg">Valider</button>    
+                        @include('partials._produit-form')
                     </form>                          
                 </div>
         </div>

@@ -9,15 +9,22 @@ use App\Models\Commande;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Exports\ProduitsExport;
+use App\Mail\NouveauProduitAjoute;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\ProduitFormRequest;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NouveauProduitNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 
 class MainController extends Controller
 {
     //
     public function AfficheAccueil()
     {
-
+        //récupération du role de l'utilisateur connecté
+        //dd(Auth::user()->role->role);
         return view('pages.front-office.welcome',
             [
                 'nomsite'=>'Service en ligne du MENPTD',
@@ -55,12 +62,21 @@ class MainController extends Controller
 
     public function ajouterProduit()
     {
+        $produit = new Produit();
         
-        return view('pages.front-office.ajouter-produit');
+        return view('pages.front-office.ajouter-produit',['produit'=>$produit]);
     }
 
     public function enregistrerProduit(ProduitFormRequest $request)
     {
+
+        $imagename="default-image.png";
+
+        if($request->file("image"))
+        {
+            $imagename=time()."_".$request->file("image")->getClientOriginalName();        
+            $request->file("image")->storeAs("public/produits-images",$imagename);
+        }       
         
         $prod = new Produit();
         $prod->uuid = Str::uuid();
@@ -70,17 +86,31 @@ class MainController extends Controller
         $prod->like=$request->like;
         $prod->poids=$request->poids;
         $prod->pays_source=$request->pays;
+        $prod->image=$imagename;
         $prod->created_at=now();        
         $prod->save();
+        
+        //envoi de mail pour l'ajout d'un nouveau produit
+        //$user=User::first();
+        //Mail::to($user)->send(new NouveauProduitAjoute($prod));
+
+        ///////Notification
+        // un seul utilisateur
+        $user=User::first();
+        $user->notify(new NouveauProduitNotification($prod));
+
+        //plusieurs utilisateurs
+        // $users=User::all();
+        // Notification::send($users, new NouveauProduitNotification($prod));
+
         return redirect()->back()->with('statuts','produit ajouté avec succès');
         
     }
 
-    public function editProduit(Produit $produit)
+    public function editProduit($id)
     {
-        dd($produit);
-
-        //$produit= Produit::find($id);
+        $produit= Produit::find($id);
+        
         return view('pages.front-office.edit-produit',['produit'=>$produit]);        
     }
 
@@ -164,7 +194,6 @@ class MainController extends Controller
         //$produitsupp = Produit::find($id);
 
         Produit::destroy($id);
-
         //dd($produitsupp);
         //$produitsupp->delete();
         return redirect()->back()->with('statuts','supprimé avec succès');
@@ -193,6 +222,16 @@ class MainController extends Controller
         //dd('ok');
         return Excel::download(new ProduitsExport, "Produits.xls");
     }
+
+    // public function sendMail()
+    // {
+    //     $user=User::first();
+    //     Mail::to($user)->send(new NouveauProduitAjoute());
+    //     dd("le mail a bien été envoyé");
+    //     //return new NouveauProduitAjoute();
+    // }
+
+    
 
     
 
